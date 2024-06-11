@@ -75,8 +75,12 @@ WSGI_APPLICATION = 'wheather.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'root',
+        'PASSWORD': 'kJsvFvajpjC1eFM25Jds3RiD',
+        'HOST': 'kamet.liara.cloud',
+        'PORT': '30846',
     }
 }
 
