@@ -1,3 +1,4 @@
+{% load jformat %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -167,7 +168,7 @@
         new Chart({{att|safe}}, {
             type: 'line',
             data: {
-                labels: [{% for item in data %}"{{ item.created_at }}", {% endfor %}],
+                labels: [{% for item in data %}"{{ item.created_at|jformat:"%A %d %B %Y %H:%M" }}", {% endfor %}],
                 datasets: [{
                     label: '{{ att|safe }}',
                     data: [{% for key,val in processed_data.items %}{% if key == att %}{% for i in val %}{{ i|safe }}, {% endfor %}{% endif %}{% endfor %}],
