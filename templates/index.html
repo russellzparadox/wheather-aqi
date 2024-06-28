@@ -8,39 +8,63 @@
           crossorigin=""/>
     <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@latest/dist/css/persian-datepicker.css">
     <style>
+        {#@import "https://unpkg.com/open-props" layer(design . system);#}
+        {#@import "https://unpkg.com/open-props/normalize.min.css" layer(demo . support);#}
+        .borderShadow {
+            border-radius: 25px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        }
+
         #map {
             height: 50vh;
+            border-radius: 25px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
         }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
 
 </head>
-<body>
+<body style="padding: 2rem">
 <form method="GET" action="{% url 'indexView' %}">
-    <label for="start_date" class="form-label">تاریخ شروع:</label>
-    <input type="text" id="start_date" class="str-date form-control" name="start_date"
-            {% if start_date %}
-           value="{{ start_date | safe }}"
-            {% endif %}/>
-    {#    <input type="date" id="start_date" class="form-control" name="start_date">#}
-    <label for="end_date" class="form-label">تاریخ پایان:</label>
-    <input type="text" id="end_date" class="end-date form-control" name="end_date"
-            {% if end_date %}
+    <div class="row m-3">
+        <div class="col">
+            <label for="start_date" class="form-label">تاریخ شروع:</label>
+            <input type="text" id="start_date" class="str-date form-control" name="start_date"
+                    {% if start_date %}
+                   value="{{ start_date | safe }}"
+                    {% endif %}/>
+            {#    <input type="date" id="start_date" class="form-control" name="start_date">#}
+        </div>
+        <div class="col">
+            <label for="end_date" class="form-label">تاریخ پایان:</label>
+            <input type="text" id="end_date" class="end-date form-control" name="end_date"
+                    {% if end_date %}
 
-           value="{{ end_date|safe }}"
-            {% endif %}/>
-    {#    <input type="date" id="end_date" class="form-control" name="end_date">#}
-    <button type="submit" class="btn-success">Filter
-    </button>
+                   value="{{ end_date|safe }}"
+                    {% endif %}/>
+        </div>
+        {#    <input type="date" id="end_date" class="form-control" name="end_date">#}
+    </div>
+    <div class="row m-3">
+        <div class="col-3">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
 </form>
-
 <div id="map"></div>
-{% for item in all_item %}
-    <canvas id={{ item }}></canvas>
-{% endfor %}
+<div class="borderShadow mt-3">
+    <ul>
+        {% for item in all_item %}
+            <li class="list-group-item">
+                <canvas id={{ item }}></canvas>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 </body>
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://unpkg.com/persian-date@latest/dist/persian-date.js"></script>
 <script src="https://unpkg.com/persian-datepicker@latest/dist/js/persian-datepicker.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -67,10 +91,11 @@
             {"lat": {{item.Lat}}, "lon": {{item.Lng}}, "data": "Point 1 Data"},
 
         {% endfor %}
-        {"lat": 51.5, "lon": -0.09, "data": "Point 1 Data"},
-        {"lat": 51.51, "lon": -0.1, "data": "Point 2 Data"},
-        {"lat": 51.49, "lon": -0.08, "data": "Point 3 Data"}
+        {#{"lat": 51.5, "lon": -0.09, "data": "Point 1 Data"},#}
+        {#{"lat": 51.51, "lon": -0.1, "data": "Point 2 Data"},#}
+        {#{"lat": 51.49, "lon": -0.08, "data": "Point 3 Data"}#}
     ];
+    var lastMarker = null
     var circle = L.circle([34.790931, 48.487411], {
         color: 'red',
         fillColor: '#f03',
@@ -78,6 +103,55 @@
         radius: 600
     }).addTo(map)
     circle.bindPopup("دانشگاه بوعلی");
+
+    map.on('click', function (e) {
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
+
+        // Make AJAX request
+        $.ajax({
+            url: '{% url "get_latest_data" %}',  // Replace with your Django view URL
+            method: 'POST',
+            data: JSON.stringify({lat: lat, lng: lng}),
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token for Django
+            },
+            success: function (response) {
+                console.log('Success:', response);
+                var popupContent = `
+                        <b>Average Values of Nearest Neighbors:</b><br>
+                        Humidity: ${response.Humidity}<br>
+                        Temperature: ${response.Temperature}<br>
+                        CO: ${response.CO}<br>
+                        H2: ${response.H2}<br>
+                        LPG: ${response.LPG}<br>
+                        CH4: ${response.CH4}<br>
+                        NOx: ${response.NOx}<br>
+                        CL2: ${response.CL2}<br>
+                        Alchohol: ${response.Alchohol}<br>
+                        CO2: ${response.CO2}<br>
+                        Toluen: ${response.Toluen}<br>
+                        NH4: ${response.NH4}<br>
+                        Aceton: ${response.Aceton}<br>
+                        PM1.0: ${response.PM1_0}<br>
+                        PM2.5: ${response.PM2_5}<br>
+                        PM10: ${response.PM10}
+                    `;
+                if (lastMarker) {
+                    map.removeLayer(lastMarker);
+                }
+
+                lastMarker = L.marker([lat, lng]).addTo(map);
+
+                lastMarker.bindPopup(popupContent).openPopup();
+                // Do something with the response if needed
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
 
     // Add points to the map
     points.forEach(function (point) {
@@ -91,15 +165,19 @@
         {#const ctx = document.getElementById('Humidity');#}
 
         new Chart({{att|safe}}, {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: [{% for item in data %}"{{ item.created_at }}", {% endfor %}],
                 datasets: [{
                     label: '{{ att|safe }}',
                     data: [{% for key,val in processed_data.items %}{% if key == att %}{% for i in val %}{{ i|safe }}, {% endfor %}{% endif %}{% endfor %}],
                     {#data: [{% for item in processed_data[att.attname] %}{{item}}, {% endfor %}],#}
-                    borderWidth: 1
-                }]
+                    {#borderWidth:#}
+                    fill: false,
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.2,
+                }],
+                {#borderColor: Utils.CHART_COLORS.blue,#}
             },
             options: {
                 layout: {
@@ -107,14 +185,26 @@
                 },
                 scales: {
                     y: {
+                        grid: {
+                            display: false
+                        },
                         beginAtZero: true,
                         {#offset: true#}
                     },
                     x: {
+                        grid: {
+                            display: false
+                        },
                         offset: true,
+                        barPercentage: 1.0,
+                        categoryPercentage: 1.0
                     }
                 },
                 responsive: true,
+                barThickness: 'flex',
+                maxBarThickness: 100,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0
             },
         });
         {#console.log({{ start_date }})#}
@@ -133,12 +223,14 @@
         return output;
     }
 
+    var to, from;
     $(document).ready(function () {
-        $(".end-date").pDatepicker({
+        to = $(".end-date").pDatepicker({
             {#inline: true,#}
             initialValueType: 'persian',
             initialValue: false,
-
+            altField: ".end-date",
+            altFormat: 'YYYY/MM/DD HH:MM',
             autoClose: true,
             format: "YYYY/MM/DD HH:MM",
             timePicker: {
@@ -163,8 +255,10 @@
             }
 
         });
-        $(".str-date").pDatepicker({
+        from = $(".str-date").pDatepicker({
             initialValueType: 'persian',
+            altField: '.str-date',
+            altFormat: 'YYYY/MM/DD HH:MM',
             initialValue: false,
             onSelect: function (unix) {
                 to.touched = true;
@@ -191,8 +285,23 @@
         });
     });
 </script>
-
-<input type="text" class="example1"/>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#update-button').click(function () {
+            $.ajax({
+                url: '{% url "get_latest_data" %}',
+                method: 'GET',
+                success: function (response) {
+                    $('#humidity').text(response.humidity);
+                    $('#temperature').text(response.temperature);
+                    $('#co').text(response.co);
+                    $('#h2').text(response.h2);
+                    // Update other fields here
+                }
+            });
+        });
+    });
+</script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=myMap"></script>
 

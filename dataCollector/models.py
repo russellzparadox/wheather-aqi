@@ -1,4 +1,5 @@
 from django.db import models
+from django_jalali.db import models as jmodels
 
 
 class Device(models.Model):
@@ -8,6 +9,7 @@ class Device(models.Model):
 # Create your models here.
 class DataCollector(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+    cr_at_jl = jmodels.jDateTimeField(auto_now=True)
     device = models.ForeignKey(Device, null=True, on_delete=models.SET_NULL)
     Lat = models.FloatField()
     Lng = models.FloatField()
