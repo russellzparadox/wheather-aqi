@@ -14,7 +14,7 @@ class Command(BaseCommand):
             data = DataCollector.objects.filter(
                 created_at__gte=now - timedelta(hours=1), created_at__lte=now
             )
-            print("fuck?")
+            print("hello the clock is ?"+now)
             # average = data.aggregate(Avg('field_name'))['field_name__avg']  # Replace 'field_name' with your field
             # self.stdout.write(self.style.SUCCESS(f'Average calculated: {average}'))
-        print("no fuck")
+        print("the clock is "+now)

@@ -1,0 +1,5 @@
+{
+  "cron": [
+    "0 * * * * cd $ROOT && python3 manage.py calculate_average >> /dev/null 2>&1"
+  ]
+}
