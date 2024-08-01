@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'dataCollector.middleware.HourlyTaskMiddleware',
 ]
 
 ROOT_URLCONF = 'wheather.urls'

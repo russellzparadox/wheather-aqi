@@ -26,8 +26,8 @@
             background-color: #0000FF;
             border: 2px solid white;
             border-radius: 50%;
-            width: 12px;
-            height: 12px;
+            width: 25px;
+            height: 25px;
             display: inline-block;
         }
     </style>
@@ -71,7 +71,11 @@
     <ul>
         {% for item in all_item %}
             <li class="list-group-item">
-                <canvas id={{ item }}></canvas>
+                <canvas class="{{ item }}" dir="rtl"></canvas>
+   
+                <div class="axis">
+                    <span class="testCanvas"></span>
+                </div>
             </li>
         {% endfor %}
     </ul>
@@ -112,7 +116,7 @@
     var userMarker = null
     var blueDotIcon = L.divIcon({
         className: 'blue-dot',
-        iconSize: [12, 12]
+        iconSize: [100, 100]
     });
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
@@ -123,7 +127,7 @@
             map.setView([userLat, userLng], 13);
 
             // Add a marker for the user's location
-            var userMarker = L.marker([userLat, userLng], {icon: blueDotIcon}).addTo(map);
+            userMarker = L.marker([userLat, userLng], {icon: blueDotIcon}).addTo(map);
             {#userMarker.bindPopup("You are here!").openPopup();#}
         });
         var userLat = null;
@@ -242,12 +246,58 @@
 </script>
 {% for att in all_item %}
     <script>
-        const {{ att|safe }} = document.getElementById("{{ att }}");
+        const {{ att|safe }} = document.getElementsByClassName("{{ att }}");
         {#const ctx = document.getElementById('Humidity');#}
 
-        new Chart({{att|safe}}, {
+        new Chart({{att|safe}}[0], {
             type: 'line',
             data: {
+        
+                labels: [{% for item in data %}["{{ item.created_at|jformat:"%H:%M" }}","{{ item.created_at|jformat:"%d %B" }}","{{ item.created_at|jformat:"%A" }}",], {% endfor %}],
+                datasets: [{
+                    label: '{{ att|safe }}',
+                    data: [{% for key,val in processed_data.items %}{% if key == att %}{% for i in val %}{{ i|safe }}, {% endfor %}{% endif %}{% endfor %}],
+                    {#data: [{% for item in processed_data[att.attname] %}{{item}}, {% endfor %}],#}
+                    {#borderWidth:#}
+                    fill: false,
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.2,
+                }],
+                {#borderColor: Utils.CHART_COLORS.blue,#}
+            },
+            options: {
+                layout: {
+                    padding: 1
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        beginAtZero: true,
+                        {#offset: true#}
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        offset: true,
+                        barPercentage: 1.0,
+                        categoryPercentage: 1.0
+                    }
+                },
+                responsive: true,
+                barThickness: 'flex',
+                maxBarThickness: 100,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0
+            },
+        });
+        
+        new Chart({{att|safe}}[1], {
+            type: 'line',
+            data: {
+        
                 labels: [{% for item in data %}"{{ item.created_at|jformat:"%A %d %B %Y %H:%M" }}", {% endfor %}],
                 datasets: [{
                     label: '{{ att|safe }}',

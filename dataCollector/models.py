@@ -29,3 +29,27 @@ class DataCollector(models.Model):
     PM1_0 = models.FloatField()
     PM2_5 = models.FloatField()
     PM10 = models.FloatField()
+
+
+
+class HourlyAverage(models.Model):
+    device = models.ForeignKey(Device, null=True, on_delete=models.SET_NULL)
+    hour = jmodels.jDateTimeField()
+    Lat_avg = models.FloatField()
+    Lng_avg = models.FloatField()
+    Humidity_avg = models.FloatField()
+    Temperature_avg = models.FloatField()
+    CO_avg = models.FloatField()
+    H2_avg = models.FloatField()
+    LPG_avg = models.FloatField()
+    CH4_avg = models.FloatField()
+    NOx_avg = models.FloatField()
+    CL2_avg = models.FloatField()
+    Alchohol_avg = models.FloatField()
+    CO2_avg = models.FloatField()
+    Toluen_avg = models.FloatField()
+    NH4_avg = models.FloatField()
+    Aceton_avg = models.FloatField()
+    PM1_0_avg = models.FloatField()
+    PM2_5_avg = models.FloatField()
+    PM10_avg = models.FloatField()
