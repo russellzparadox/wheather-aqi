@@ -1,5 +1,8 @@
 from django.core.management.base import BaseCommand
-from dataCollector.models import DataCollector  # Replace with your model
+from rest_framework.templatetags.rest_framework import data
+from django.db.models import Avg
+
+from dataCollector.models import DataCollector, HourlyAverage  # Replace with your model
 from django.utils import timezone
 from datetime import timedelta
 
@@ -9,12 +12,63 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         now = timezone.now()
+        now = now.replace(minute=0, second=0, microsecond=0)
+
         if now.minute == 0:
             # Perform the average calculation
-            data = DataCollector.objects.filter(
-                created_at__gte=now - timedelta(hours=1), created_at__lte=now
+            average_data_query = None
+            count = 10
+            while not average_data_query and count != 0:
+                average_data_query = DataCollector.objects.filter(
+                    created_at__gte=now - timedelta(hours=1), created_at__lte=now
+                )
+                now = now - timedelta(hours=1)
+                count -= 1
+            if not average_data_query:
+                print("there is no data available for the pas ten hour")
+                exit(0)
+            average_values = average_data_query.aggregate(
+                avg_lat=Avg('Lat'),
+                avg_lng=Avg('Lng'),
+                avg_humidity=Avg('Humidity'),
+                avg_temperature=Avg('Temperature'),
+                avg_co=Avg('CO'),
+                avg_h2=Avg('H2'),
+                avg_lpg=Avg('LPG'),
+                avg_ch4=Avg('CH4'),
+                avg_nox=Avg('NOx'),
+                avg_cl2=Avg('CL2'),
+                avg_alchohol=Avg('Alchohol'),
+                avg_co2=Avg('CO2'),
+                avg_toluen=Avg('Toluen'),
+                avg_nh4=Avg('NH4'),
+                avg_aceton=Avg('Aceton'),
+                avg_pm1_0=Avg('PM1_0'),
+                avg_pm2_5=Avg('PM2_5'),
+                avg_pm10=Avg('PM10')
             )
-            print("hello the clock is ?")
-            # average = data.aggregate(Avg('field_name'))['field_name__avg']  # Replace 'field_name' with your field
-            # self.stdout.write(self.style.SUCCESS(f'Average calculated: {average}'))
-        print("the clock is ")
+
+            try:
+                HourlyAverage.objects.create(
+                    hour=now,  # or use auto_now_add to set the current time automatically
+                    Lat_avg=average_values['avg_lat'],
+                    Lng_avg=average_values['avg_lng'],
+                    Humidity_avg=average_values['avg_humidity'],
+                    Temperature_avg=average_values['avg_temperature'],
+                    CO_avg=average_values['avg_co'],
+                    H2_avg=average_values['avg_h2'],
+                    LPG_avg=average_values['avg_lpg'],
+                    CH4_avg=average_values['avg_ch4'],
+                    NOx_avg=average_values['avg_nox'],
+                    CL2_avg=average_values['avg_cl2'],
+                    Alchohol_avg=average_values['avg_alchohol'],
+                    CO2_avg=average_values['avg_co2'],
+                    Toluen_avg=average_values['avg_toluen'],
+                    NH4_avg=average_values['avg_nh4'],
+                    Aceton_avg=average_values['avg_aceton'],
+                    PM1_0_avg=average_values['avg_pm1_0'],
+                    PM2_5_avg=average_values['avg_pm2_5'],
+                    PM10_avg=average_values['avg_pm10']
+                )
+            except Exception as e:
+                print(f'an error has oucored {e}')

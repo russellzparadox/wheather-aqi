@@ -31,10 +31,9 @@ class DataCollector(models.Model):
     PM10 = models.FloatField()
 
 
-
 class HourlyAverage(models.Model):
     device = models.ForeignKey(Device, null=True, on_delete=models.SET_NULL)
-    hour = jmodels.jDateTimeField()
+    hour = jmodels.jDateTimeField(unique=True)
     Lat_avg = models.FloatField()
     Lng_avg = models.FloatField()
     Humidity_avg = models.FloatField()
