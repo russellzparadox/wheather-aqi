@@ -26,6 +26,6 @@ urlpatterns = [
                   # path('admin/', admin.site.urls),
                   path('admin/', include('adminPanel.urls')),
                   path('api/', include("dataCollector.urls")),
-                  path('', RedirectView.as_view(url='/api/'), name='index'),
+                  path('', include("view.urls"), name='index'),
 
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
