@@ -51,7 +51,7 @@ class DataCollectionCreateView(CreateAPIView):
 def index(request):
     start_date = persian_to_django_date(request.GET.get("start_date", None))
     end_date = persian_to_django_date(request.GET.get("end_date", None))
-    items = DataCollector.objects.order_by("-id")[:30]
+    items = DataCollector.objects.order_by("-id")[:300]
     items = items[::-1]
     attribute_names = DataCollector._meta.get_fields()
     attribute_names = attribute_names[5:]

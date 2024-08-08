@@ -20,10 +20,26 @@
             rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;
         }
 
+        body {
+            background: #F8EDE3;
+        }
+
+        .nav {
+            --bs-nav-link-hover-color: #D0B8A8;
+        }
+
+        .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+            background: #D0B8A8;
+        }
+
+        .nav-link {
+
+            color: #C5705D;
+        }
+
         #map {
             height: calc(50vw * 3 / 4);
-            width: 50vw;
-            border-radius: 25px;
+        {#width: 50vw;#} border-radius: 25px;
         }
 
         .nav-tabs {
@@ -82,16 +98,34 @@
             </div>
         </div>
     </form>
-    <div id="map"></div>
+    <div class="container">
+        <div id="map"></div>
+    </div>
 
-    <div class="container mt-3">
+    <div class="mt-3">
         <div class="row">
-            <!-- Tab navigation column -->
-            <div class="col-3 d-flex flex-column" id="tabs_container">
-                <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+            <!-- Tab content column -->
+            <div class="col-11">
+                <div class="tab-content" id="myTabContent">
                     {% for item in all_item %}
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if forloop.first %} active {% endif %}"
+                        <div class="tab-pane {% if forloop.first %} show active{% endif %}"
+                             id="{{ item }}"
+                             role="tabpanel"
+                             aria-labelledby="{{ item }}-tab">
+                            <div class="{{ item }}" dir="rtl" style="border-radius: 25px;overflow: hidden"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Tab navigation column -->
+            <div class="col-1 d-flex flex-column py-3" id="tabs_container"
+                 style="background: #DFD3C3;border-radius: 25px">
+                <ul class="nav nav-pills flex-column align-items-stretch justify-content-center w-100" id="myTab"
+                    role="tablist">
+                    {% for item in all_item %}
+                        <li class="nav-item w-100" role="presentation">
+                            <button class="nav-link w-100 text-center {% if forloop.first %} active {% endif %} "
+                                    style="border-radius: 12.5px"
                                     id="{{ item }}-tab"
                                     data-bs-toggle="tab"
                                     data-bs-target="#{{ item }}"
@@ -104,19 +138,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <!-- Tab content column -->
-            <div class="col-9">
-                <div class="tab-content mt-3" id="myTabContent">
-                    {% for item in all_item %}
-                        <div class="tab-pane {% if forloop.first %} show active{% endif %}"
-                             id="{{ item }}"
-                             role="tabpanel"
-                             aria-labelledby="{{ item }}-tab">
-                            <canvas class="{{ item }}" dir="rtl"></canvas>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
+
         </div>
     </div>
 
@@ -136,7 +158,6 @@
     {#                </li>#}
     {#            {% endfor %}#}
     {#        </ul>#}
-    </div>
 {% endblock %}
 {% block script %}
     <script src="https://unpkg.com/persian-date@latest/dist/persian-date.js"></script>
@@ -147,20 +168,39 @@
             crossorigin=""></script>
     {#    https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom#}
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-    <script src="{% static 'node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js' %}"></script>
+    {#    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
+    {#    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>#}
+    {#    <script src="{% static 'node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js' %}"></script>#}
     {#    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>#}
     {# map initialization #}
     <script>
         // Initialize the map
         const map = L.map('map').setView([34.800593, 48.522637], 13);
+        var Stadia_StamenWatercolor = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.{ext}?api_key=2b1605ea-6f85-4e4b-a481-b9cff883af78', {
+            api: '2b1605ea-6f85-4e4b-a481-b9cff883af78',
+            minZoom: 1,
+            maxZoom: 16,
+            {#attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',#}
+            ext: 'jpg'
+        }).addTo(map);
+
+        var Stadia_StamenTonerLines = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_lines/{z}/{x}/{y}{r}.{ext}?api_key=2b1605ea-6f85-4e4b-a481-b9cff883af78', {
+            minZoom: 0,
+            maxZoom: 20,
+            {#attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',#}
+            ext: 'png'
+        }).addTo(map);
+        var CartoDB_VoyagerOnlyLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+            {#attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',#}
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
 
 
         // Add a tile layer to the map (OpenStreetMap)
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        {#L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {#}
+        {#    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'#}
+        //}).addTo(map);
 
         // Define the data points
         const points = [
@@ -244,14 +284,14 @@
                 position: 'bottomleft' // 'topleft', 'topright', 'bottomleft', 'bottomright'
             },
             onAdd: function (map) {
-                var container = L.DomUtil.create('div', 'leaflet-bar');
-                var button = L.DomUtil.create('button', '', container);
-                button.innerHTML = 'Center on User';
-                L.DomEvent.on(button, 'click', function (e) {
-                    L.DomEvent.stopPropagation(e);
-                    centerMap()
-                });
-                return container;
+                {#var container = L.DomUtil.create('div', 'leaflet-bar');#}
+                //var button = L.DomUtil.create('button', '', container);
+                //button.innerHTML = 'Center on User';
+                //L.DomEvent.on(button, 'click', function (e) {
+                 //   L.DomEvent.stopPropagation(e);
+                  //  centerMap()
+                //});
+                {#return container;#}
             }
         });
         map.addControl(new CenterControl());
@@ -321,94 +361,124 @@
             marker.bindPopup(point.data);
         });
     </script>
-
+    <script src="{% static 'js/vintage.js' %}"></script>
 
     <script>
         let tab = document.getElementById("tabs_container")
+        const col_9 = document.getElementById("myTabContent")
         const tab_height = tab.offsetHeight
-        console.log(tab_height)
-        document.getElementById('myTabContent').style.height = tab_height + "px"
-        console.log(document.getElementById("myTabContent").offsetHeight)
+        const tab_width = col_9.offsetWidth
         {% for att in all_item %}
+            document.getElementsByClassName('{{ att|safe }}')[0].style.height = tab_height + "px"
+            document.getElementsByClassName('{{ att|safe }}')[0].style.width = tab_width + "px"
+
             {#<!-- chart of {{ att }} -->#}
-            const {{ att|safe }} = document.getElementsByClassName("{{ att }}");
-            {#const ctx = document.getElementById('Humidity');#}
+            const {{ att|safe }} = echarts.init(document.getElementsByClassName("{{ att }}")[0], 'vintage');
 
-            new Chart({{att|safe}}[0], {
-                type: 'line',
-                data: {
-
-                    labels: [{% for item in data %}[
-                        "{{ item.created_at|jformat:"%H:%M" }}","{{ item.created_at|jformat:"%d %B" }}","{{ item.created_at|jformat:"%A" }}",
-                        ], {% endfor %}],
-                    datasets: [{
-                        label: '{{ att|safe }}',
-                        data: [{% for key,val in processed_data.items %}{% if key == att %}{% for i in val %}{{ i|safe }}, {% endfor %}{% endif %}{% endfor %}],
-                        {#data: [{% for item in processed_data[att.attname] %}{{item}}, {% endfor %}],#}
-                        {#borderWidth:#}
-                        fill: false,
-                        cubicInterpolationMode: 'monotone',
-                        tension: 0.2,
-                    }],
-                    {#borderColor: Utils.CHART_COLORS.blue,#}
+            {#echarts.init({{ att|safe }})#}
+            let options{{ att|safe }} = {
+                title: {
+                    text: '{{att|safe}}',
+                    right: '1%'
                 },
-                options: {
-                    layout: {
-                        padding: 1
-                    },
-                    plugins: {
-                        zoom: {
-                            limits: {
-                                x: {minRange: 5}
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'line',
+                        snap: true,
+                        axis: 'x',
+                        label: {
+                            show: true,
+                            formatter: function (value) {
+                                {#console.log(value)#}
+                                return value.value.split(',').join('\n'); // Ensure correct handling of newline characters
                             },
-                            animation: {
-                                duration: 1000,
-                                easing: 'easeOutCubic'
-                            },
-                            pan: {
-                                enabled: true,
-                                mode: 'x'
-                            },
-                            zoom: {
-                                wheel: {
-                                    enabled: true,
-                                    modifierKey: 'ctrl'
-                                },
-                                pinch: {
-                                    enabled: true
-                                },
-                                mode: 'x',
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            grid: {
-                                display: false
-                            },
-                            beginAtZero: true,
-                            {#offset: true#}
+
                         },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            offset: true,
-                            barPercentage: 1.0,
-                            categoryPercentage: 1.0
+                        crossStyle: {
+                            color: '#999'
+                        },
+
+                    }
+                },
+                toolbox: {
+                    left: 10,
+
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        restore: {},
+                        saveAsImage: {},
+                        {#dataView:{}#}
+                    }
+                },
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '10%'
+                },
+                xAxis: {
+                    {#inverse:true,#}
+                    data: [{% for item in data %}[
+                        "{{ item.created_at|jformat:"%A" }},{{ item.created_at|jformat:"%d %B" }},{{ item.created_at|jformat:"%H:%M" }}",
+                        ], {% endfor %}],
+                    axisLabel: {
+                        formatter: function (value, index) {
+                            {#console.log("fuck")#}
+                            return value.split(',').join('\n'); // Ensure correct handling of newline characters
+                        },
+                        textStyle: {
+                            align: 'center' // Center-align the text
                         }
                     },
-                    animation: {
-                        duration: 0
-                    },
-                    responsive: true,
-                    barThickness: 'flex',
-                    maxBarThickness: 100,
-                    barPercentage: 1.0,
-                    categoryPercentage: 1.0,
-                    maintainAspectRatio: false
                 },
-            });
+                yAxis: {
+                    type: 'value',
+                    name: '{{att}}',
+                    position: 'left',
+                    alignTicks: true,
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: "#EE6666"
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}'
+                    },
+
+                },
+                dataZoom: [
+                    {
+                        start: 60,
+
+                        type: "inside",
+                        minSpan: 20,
+                        orient: 'horizontal',
+                        zoomOnMouseWheel: 'ctrl',
+                        moveOnMouseWheel: true
+                        {#startValue: '2014-06-01'#}
+                    },
+                    //{
+                    {#type: 'inside'#}
+                    //}
+                ],
+
+                series: {
+                    name: "{{ att }}",
+
+                    type: 'line',
+                    data: [{% for key,val in processed_data.items %}{% if key == att %}{% for i in val %}{{ i|safe }}, {% endfor %}{% endif %}{% endfor %}],
+
+                }
+            };
+            {{ att|safe }}.setOption(options{{ att|safe }})
+            {#echarts.init(options{{ att|safe }})#}
+
+            {#console.log({{ att|safe }}[0])#}
+            {#            {{ att|safe }}.#}
+
 
             {#console.log({{ start_date }})#}
         {% endfor %}
