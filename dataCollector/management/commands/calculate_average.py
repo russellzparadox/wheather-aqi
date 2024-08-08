@@ -50,25 +50,25 @@ class Command(BaseCommand):
 
             try:
                 HourlyAverage.objects.create(
-                    hour=now,  # or use auto_now_add to set the current time automatically
-                    Lat_avg=average_values['avg_lat'],
-                    Lng_avg=average_values['avg_lng'],
-                    Humidity_avg=average_values['avg_humidity'],
-                    Temperature_avg=average_values['avg_temperature'],
-                    CO_avg=average_values['avg_co'],
-                    H2_avg=average_values['avg_h2'],
-                    LPG_avg=average_values['avg_lpg'],
-                    CH4_avg=average_values['avg_ch4'],
-                    NOx_avg=average_values['avg_nox'],
-                    CL2_avg=average_values['avg_cl2'],
-                    Alchohol_avg=average_values['avg_alchohol'],
-                    CO2_avg=average_values['avg_co2'],
-                    Toluen_avg=average_values['avg_toluen'],
-                    NH4_avg=average_values['avg_nh4'],
-                    Aceton_avg=average_values['avg_aceton'],
-                    PM1_0_avg=average_values['avg_pm1_0'],
-                    PM2_5_avg=average_values['avg_pm2_5'],
-                    PM10_avg=average_values['avg_pm10']
+                    created_at=now,  # or use auto_now_add to set the current time automatically
+                    Lat=average_values['avg_lat'],
+                    Lng=average_values['avg_lng'],
+                    Humidity=average_values['avg_humidity'],
+                    Temperature=average_values['avg_temperature'],
+                    CO=average_values['avg_co'],
+                    H2=average_values['avg_h2'],
+                    LPG=average_values['avg_lpg'],
+                    CH4=average_values['avg_ch4'],
+                    NOx=average_values['avg_nox'],
+                    CL2=average_values['avg_cl2'],
+                    Alchohol=average_values['avg_alchohol'],
+                    CO2=average_values['avg_co2'],
+                    Toluen=average_values['avg_toluen'],
+                    NH4=average_values['avg_nh4'],
+                    Aceton=average_values['avg_aceton'],
+                    PM1_0=average_values['avg_pm1_0'],
+                    PM2_5=average_values['avg_pm2_5'],
+                    PM10=average_values['avg_pm10']
                 )
             except Exception as e:
                 print(f'an error has oucored {e}')
