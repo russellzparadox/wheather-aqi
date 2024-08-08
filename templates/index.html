@@ -1,10 +1,11 @@
 {% extends "base_template.html" %}
+{% load static %}
 {% load jformat %}
 {% block title %}Title{% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
+          crossorigin="" xmlns=""/>
     <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@latest/dist/css/persian-datepicker.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -12,44 +13,47 @@
 
 {% endblock %}
 {% block style %}
-    {#@import "https://unpkg.com/open-props" layer(design . system);#}
-    {#@import "https://unpkg.com/open-props/normalize.min.css" layer(demo . support);#}
-    .borderShadow {
-    border-radius: 25px;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-    }
+    <style>
+        {#@import "https://unpkg.com/open-props" layer(design . system);#}
+        {#@import "https://unpkg.com/open-props/normalize.min.css" layer(demo . support);#}
+        .borderShadow {
+            border-radius: 25px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+            rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        }
 
-    #map {
-    height: 50vh;
-    border-radius: 25px;
-    {#box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;#}
-    }
+        #map {
+            height: calc(50vw * 3 / 4);
+            width: 50vw;
+            border-radius: 25px;
+        {#box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;#}
+        }
 
-{#    .chartWrapper {#}
-{#    position: relative;#}
-{#    }#}
-{##}
-{#    .chartWrapper > canvas {#}
-{#    position: absolute;#}
-{#    left: 0;#}
-{#    top: 0;#}
-{#    pointer-events: none;#}
-{#    }#}
-{##}
-{#    .chartAreaWrapper {#}
-{#    width: 100%;#}
-{#    overflow-x: scroll;#}
-{#    }#}
+        {#    .chartWrapper {#}
+        {#    position: relative;#}
+        {#    }#}
+        {##}
+        {#    .chartWrapper > canvas {#}
+        {#    position: absolute;#}
+        {#    left: 0;#}
+        {#    top: 0;#}
+        {#    pointer-events: none;#}
+        {#    }#}
+        {##}
+        {#    .chartAreaWrapper {#}
+        {#    width: 100%;#}
+        {#    overflow-x: scroll;#}
+        {#    }#}
 
-    .blue-dot {
-    background-color: #0000FF;
-    border: 2px solid white;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    display: inline-block;
-    }
+        .blue-dot {
+            background-color: #0000FF;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: inline-block;
+        }
+    </style>
 {% endblock %}
 
 
@@ -102,16 +106,20 @@
 {% block script %}
     <script src="https://unpkg.com/persian-date@latest/dist/persian-date.js"></script>
     <script src="https://unpkg.com/persian-datepicker@latest/dist/js/persian-datepicker.js"></script>
-
-
+    {# leaflet script #}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
-
+    {#    https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom#}
+    {#    <script src="{% static 'node_modules/chart.js/dist/chart.js' %}"></script>#}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="{% static 'node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js' %}"></script>
+    {#    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>#}
+    {# map initialization #}
     <script>
         // Initialize the map
-        var map = L.map('map').setView([34.800593, 48.522637], 13);
+        const map = L.map('map').setView([34.800593, 48.522637], 13);
 
 
         // Add a tile layer to the map (OpenStreetMap)
@@ -120,7 +128,7 @@
         }).addTo(map);
 
         // Define the data points
-        var points = [
+        const points = [
             {% for item in data %}
                 {
                     "lat": {{item.Lat}}, "lon": {{item.Lng}}, "data": `
@@ -133,11 +141,11 @@
                         CH4: {{item.CH4}}<br>
                         NOx: {{item.NOx}}<br>
                         CL2: {{item.CL2}}<br>
-                        Alchohol: {{item.Alchohol}}<br>
+                        Alcohol: {{item.Alchohol}}<br>
                         CO2: {{item.CO2}}<br>
-                        Toluen: {{item.Toluen}}<br>
+                        Toluene: {{item.Toluen}}<br>
                         NH4: {{item.NH4}}<br>
-                        Aceton: {{item.Aceton}}<br>
+                        Acetone: {{item.Aceton}}<br>
                         PM1.0: {{item.PM1_0}}<br>
                         PM2.5: {{item.PM2_5}}<br>
                         PM10: {{item.PM10}}
@@ -145,20 +153,17 @@
                 },
 
             {% endfor %}
-            {#{"lat": 51.5, "lon": -0.09, "data": "Point 1 Data"},#}
-            {#{"lat": 51.51, "lon": -0.1, "data": "Point 2 Data"},#}
-            {#{"lat": 51.49, "lon": -0.08, "data": "Point 3 Data"}#}
         ];
-        var lastMarker = null
-        var userMarker = null
-        var blueDotIcon = L.divIcon({
+        let lastMarker = null;
+        let userMarker = null;
+        const blueDotIcon = L.divIcon({
             className: 'blue-dot',
             iconSize: [100, 100]
         });
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                var userLat = position.coords.latitude;
-                var userLng = position.coords.longitude;
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
 
                 // Center the map on the user's location
                 map.setView([userLat, userLng], 13);
@@ -281,7 +286,10 @@
             marker.bindPopup(point.data);
         });
     </script>
+
+
     {% for att in all_item %}
+        <!-- chart of {{ att }} -->
         <script>
             const {{ att|safe }} = document.getElementsByClassName("{{ att }}");
             {#const ctx = document.getElementById('Humidity');#}
@@ -304,21 +312,34 @@
                     }],
                     {#borderColor: Utils.CHART_COLORS.blue,#}
                 },
-                onAnimationComplete: function () {
-                    var sourceCanvas = this.chart.ctx.canvas;
-                    // the -5 is so that we don't copy the edges of the line
-                    var copyWidth = this.scale.xScalePaddingLeft - 5;
-                    // the +5 is so that the bottommost y axis label is not clipped off
-                    // we could factor this in using measureText if we wanted to be generic
-                    var copyHeight = this.scale.endPoint + 5;
-                    var targetCtx = document.getElementById("myChartAxis").getContext("2d");
-                    targetCtx.canvas.width = copyWidth;
-                    targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth, copyHeight, 0, 0, copyWidth, copyHeight);
-                },
-
                 options: {
                     layout: {
                         padding: 1
+                    },
+                    plugins: {
+                        zoom: {
+                            limits: {
+                                x: {minRange: 5}
+                            },
+                            animation: {
+                                duration: 1000,
+                                easing: 'easeOutCubic'
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'x'
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                    modifierKey: 'ctrl'
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'x',
+                            }
+                        }
                     },
                     scales: {
                         y: {
@@ -347,18 +368,6 @@
 
             new Chart({{att|safe}}[1], {
                 type: 'line',
-                onAnimationComplete: function () {
-                    var sourceCanvas = this.chart.ctx.canvas;
-                    // the -5 is so that we don't copy the edges of the line
-                    var copyWidth = this.scale.xScalePaddingLeft - 5;
-                    // the +5 is so that the bottommost y axis label is not clipped off
-                    // we could factor this in using measureText if we wanted to be generic
-                    var copyHeight = this.scale.endPoint + 5;
-                    var targetCtx = document.getElementById("myChartAxis").getContext("2d");
-                    targetCtx.canvas.width = copyWidth;
-                    targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth, copyHeight, 0, 0, copyWidth, copyHeight);
-                },
-
                 data: {
 
                     labels: [{% for item in data %}"{{ item.created_at|jformat:"%A %d %B %Y %H:%M" }}", {% endfor %}],
@@ -478,22 +487,5 @@
                 },
             });
         });
-    </script>
-    <script type="text/javascript">
-        {#$(document).ready(function () {#}
-        {#    $('#update-button').click(function () {#}
-        {#        $.ajax({#}
-        {#            url: '{% url "get_latest_data" %}',#}
-        {#            method: 'GET',#}
-        {#            success: function (response) {#}
-        {#                $('#humidity').text(response.humidity);#}
-        {#                $('#temperature').text(response.temperature);#}
-        {#                $('#co').text(response.co);#}
-        {#                $('#h2').text(response.h2);#}
-        {#                // Update other fields here#}
-        {#            }#}
-        {#        });#}
-        {#    });#}
-        {#});#}
     </script>
 {% endblock %}
