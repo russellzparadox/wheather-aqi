@@ -288,13 +288,13 @@
                 //var button = L.DomUtil.create('button', '', container);
                 //button.innerHTML = 'Center on User';
                 //L.DomEvent.on(button, 'click', function (e) {
-                 //   L.DomEvent.stopPropagation(e);
-                  //  centerMap()
+                //   L.DomEvent.stopPropagation(e);
+                //  centerMap()
                 //});
                 {#return container;#}
             }
         });
-        map.addControl(new CenterControl());
+        {#map.addControl(new CenterControl());#}
 
 
         /*
@@ -354,7 +354,8 @@
                 }
             });
         });
-
+        pp = [{% for i in data %}['{{ i.Lat }}','{{i.Lng}}'],{% endfor %}]
+        var polyLine = L.polyline(pp).addTo(map)
         // Add points to the map
         points.forEach(function (point) {
             var marker = L.marker([point.lat, point.lon]).addTo(map);
