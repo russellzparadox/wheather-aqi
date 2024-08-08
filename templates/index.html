@@ -14,36 +14,34 @@
 {% endblock %}
 {% block style %}
     <style>
-        {#@import "https://unpkg.com/open-props" layer(design . system);#}
-        {#@import "https://unpkg.com/open-props/normalize.min.css" layer(demo . support);#}
-        .borderShadow {
+        .{#@import "https://unpkg.com/open-props" layer(design . system);#}{#@import "https://unpkg.com/open-props/normalize.min.css" layer(demo . support);#} .borderShadow {
             border-radius: 25px;
-            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-            rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0 54px 55px, rgba(0, 0, 0, 0.12) 0 -12px 30px, rgba(0, 0, 0, 0.12) 0 4px 6px,
+            rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;
         }
 
         #map {
             height: calc(50vw * 3 / 4);
             width: 50vw;
             border-radius: 25px;
-        {#box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;#}
         }
 
-        {#    .chartWrapper {#}
-        {#    position: relative;#}
-        {#    }#}
-        {##}
-        {#    .chartWrapper > canvas {#}
-        {#    position: absolute;#}
-        {#    left: 0;#}
-        {#    top: 0;#}
-        {#    pointer-events: none;#}
-        {#    }#}
-        {##}
-        {#    .chartAreaWrapper {#}
-        {#    width: 100%;#}
-        {#    overflow-x: scroll;#}
-        {#    }#}
+        .nav-tabs {
+            flex: 1 0 auto;
+        }
+
+        #myTabContent {
+            height: 100%; /* Ensure it uses the full height of its parent */
+        }
+
+        .tab-pane {
+            height: 100%; /* Ensure tab panes also take full height */
+        }
+
+        canvas {
+            height: 100% !important; /* Make canvas take the full height */
+            width: 100% !important; /* Optionally ensure full width */
+        }
 
         .blue-dot {
             background-color: #0000FF;
@@ -85,22 +83,59 @@
         </div>
     </form>
     <div id="map"></div>
-    <div class="borderShadow mt-3">
-        <ul>
-            {% for item in all_item %}
-                <li class="list-group-item">
-                    <div class="chartWrapper">
-                        <div class="chartAreaWrapper">
 
+    <div class="container mt-3">
+        <div class="row">
+            <!-- Tab navigation column -->
+            <div class="col-3 d-flex flex-column" id="tabs_container">
+                <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+                    {% for item in all_item %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if forloop.first %} active {% endif %}"
+                                    id="{{ item }}-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#{{ item }}"
+                                    type="button" role="tab"
+                                    aria-controls="{{ item }}"
+                                    aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                {{ item }}
+                            </button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- Tab content column -->
+            <div class="col-9">
+                <div class="tab-content mt-3" id="myTabContent">
+                    {% for item in all_item %}
+                        <div class="tab-pane {% if forloop.first %} show active{% endif %}"
+                             id="{{ item }}"
+                             role="tabpanel"
+                             aria-labelledby="{{ item }}-tab">
                             <canvas class="{{ item }}" dir="rtl"></canvas>
                         </div>
-                    </div>
-                    <div class="axis">
-                        <span class="testCanvas"></span>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {#        <ul>#}
+    {#            {% for item in all_item %}#}
+    {#                <li class="list-group-item">#}
+    {#                    <div class="chartWrapper">#}
+    {#                        <div class="chartAreaWrapper">#}
+    {##}
+    {#                            <canvas class="{{ item }}" dir="rtl"></canvas>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                    <div class="axis">#}
+    {#                        <span class="testCanvas"></span>#}
+    {#                    </div>#}
+    {#                </li>#}
+    {#            {% endfor %}#}
+    {#        </ul>#}
     </div>
 {% endblock %}
 {% block script %}
@@ -111,7 +146,7 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
     {#    https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom#}
-    {#    <script src="{% static 'node_modules/chart.js/dist/chart.js' %}"></script>#}
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
     <script src="{% static 'node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js' %}"></script>
@@ -288,9 +323,14 @@
     </script>
 
 
-    {% for att in all_item %}
-        <!-- chart of {{ att }} -->
-        <script>
+    <script>
+        let tab = document.getElementById("tabs_container")
+        const tab_height = tab.offsetHeight
+        console.log(tab_height)
+        document.getElementById('myTabContent').style.height = tab_height + "px"
+        console.log(document.getElementById("myTabContent").offsetHeight)
+        {% for att in all_item %}
+            {#<!-- chart of {{ att }} -->#}
             const {{ att|safe }} = document.getElementsByClassName("{{ att }}");
             {#const ctx = document.getElementById('Humidity');#}
 
@@ -358,61 +398,21 @@
                             categoryPercentage: 1.0
                         }
                     },
-                    responsive: true,
-                    barThickness: 'flex',
-                    maxBarThickness: 100,
-                    barPercentage: 1.0,
-                    categoryPercentage: 1.0
-                },
-            });
-
-            new Chart({{att|safe}}[1], {
-                type: 'line',
-                data: {
-
-                    labels: [{% for item in data %}"{{ item.created_at|jformat:"%A %d %B %Y %H:%M" }}", {% endfor %}],
-                    datasets: [{
-                        label: '{{ att|safe }}',
-                        data: [{% for key,val in processed_data.items %}{% if key == att %}{% for i in val %}{{ i|safe }}, {% endfor %}{% endif %}{% endfor %}],
-                        {#data: [{% for item in processed_data[att.attname] %}{{item}}, {% endfor %}],#}
-                        {#borderWidth:#}
-                        fill: false,
-                        cubicInterpolationMode: 'monotone',
-                        tension: 0.2,
-                    }],
-                    {#borderColor: Utils.CHART_COLORS.blue,#}
-                },
-                options: {
-                    layout: {
-                        padding: 1
-                    },
-                    scales: {
-                        y: {
-                            grid: {
-                                display: false
-                            },
-                            beginAtZero: true,
-                            {#offset: true#}
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            offset: true,
-                            barPercentage: 1.0,
-                            categoryPercentage: 1.0
-                        }
+                    animation: {
+                        duration: 0
                     },
                     responsive: true,
                     barThickness: 'flex',
                     maxBarThickness: 100,
                     barPercentage: 1.0,
-                    categoryPercentage: 1.0
+                    categoryPercentage: 1.0,
+                    maintainAspectRatio: false
                 },
             });
+
             {#console.log({{ start_date }})#}
-        </script>
-    {% endfor %}
+        {% endfor %}
+    </script>
     <script type="text/javascript">
         function persianToLatinNumbers(input) {
             const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];

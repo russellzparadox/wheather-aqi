@@ -31,6 +31,7 @@
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
     <orderEntry type="library" name="chartjs-plugin-zoom" level="application" />
     <orderEntry type="library" name="hammerjs" level="application" />
+    <orderEntry type="library" name="echarts" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
