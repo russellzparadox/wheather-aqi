@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "move-js": "^0.5.0",
+    "scrolling-tabs-bootstrap-5": "^1.0.7"
+  }
+}
