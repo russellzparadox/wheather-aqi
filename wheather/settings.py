@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django_jalali',
     'rest_framework',
     'dataCollector',
-    'view'
+    'view',
+    'import_export',
 ]
 
 MIDDLEWARE = [

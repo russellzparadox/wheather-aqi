@@ -27,13 +27,11 @@ def index(request):
         items = HourlyAverage.objects.filter(
             created_at__range=(start_date, end_date)
         ).order_by("id")
-    humidity = HourlyAverage.objects.values_list("Humidity", flat=True)
     data = {
         "data": items,
         "start_date": request.GET.get("start_date", None),
         "end_date": request.GET.get("end_date", None),
         "all_item": attribute_names,
-        "humidity": humidity,
         "processed_data": processed_data["datasets"],
     }
     return render(request, "index.html", data)

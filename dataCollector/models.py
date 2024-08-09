@@ -30,6 +30,9 @@ class DataCollector(models.Model):
     PM2_5 = models.FloatField()
     PM10 = models.FloatField()
 
+    def __str__(self):
+        return self.id
+
 
 class HourlyAverage(models.Model):
     device = models.ForeignKey(Device, null=True, on_delete=models.SET_NULL)
