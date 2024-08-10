@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from dataCollector.views import persian_to_django_date
 from dataCollector.models import HourlyAverage
+
+
 # Create your views here.
 def index(request):
     start_date = persian_to_django_date(request.GET.get("start_date", None))
@@ -35,4 +37,3 @@ def index(request):
         "processed_data": processed_data["datasets"],
     }
     return render(request, "index.html", data)
-

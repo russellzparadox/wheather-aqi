@@ -9,12 +9,6 @@
                 <div class="col-sm-6">
                     <h1 class="m-0 text-dark">داشبورد</h1>
                 </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-left">
-                        <li class="breadcrumb-item"><a href="#">خانه</a></li>
-                        <li class="breadcrumb-item active">داشبورد ورژن 2</li>
-                    </ol>
-                </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
@@ -27,23 +21,22 @@
                 <div class="card-header">
                     <h3 class="card-title">نمودار</h3>
 
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-remove"></i>
-                        </button>
-                    </div>
+{#                    <div class="card-tools">#}
+{#                        <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i>#}
+{#                        </button>#}
+{#                        <button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-remove"></i>#}
+{#                        </button>#}
+{#                    </div>#}
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <div class="Humidity" dir="rtl" style="border-radius: 25px;overflow: hidden;height: 600px"></div>
+                    <div class="Humidity" id="chart" dir="rtl"
+                         style="border-radius: 25px;overflow: hidden;height: 600px"></div>
 
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
-                    برای کسب اطلاعات بیشتر و استفاده از راهنمای این کتابخانه به <a href="https://select2.github.io/">مستندات</a>
-                    مراجعه کنید
-                </div>
+{#                <div class="card-footer">#}
+{#                </div>#}
             </div>
         </div>
         <!-- /.container-fluid -->
@@ -58,10 +51,10 @@
     <script>
 
         {#<!-- chart of {{ att }} -->#}
-        const {{ att_name|safe }} = echarts.init(document.getElementsByClassName("{{ att_name }}")[0], 'vintage');
+        const chart = echarts.init(document.getElementById("chart"), 'vintage');
 
         {#echarts.init({{ att_name|safe }})#}
-        let options{{ att_name|safe }} = {
+        let options = {
             title: {
                 text: '{{att_name|safe}}',
                 right: '1%'
@@ -197,7 +190,11 @@
                 name: "{{ att_name }}",
 
                 type: 'line',
-                data: [{% for att in data %}{{att.Humidity}}, {% endfor %}],
+                data: [
+                    {% for att in raw_data %}
+                        {{att}},
+                    {% endfor %}
+                ],
                 {% if att_name == "aqi" %}
                     markLine: {
                         silent: true,
@@ -226,7 +223,7 @@
                 {% endif %}
             }
         };
-        {{ att_name|safe }}.setOption(options{{ att_name|safe }})
+        chart.setOption(options)
         {#echarts.init(options{{ att_name|safe }})#}
 
         {#console.log({{ att_name|safe }}[0])#}
