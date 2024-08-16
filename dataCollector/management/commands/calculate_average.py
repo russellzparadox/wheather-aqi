@@ -1,10 +1,10 @@
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
-from rest_framework.templatetags.rest_framework import data
 from django.db.models import Avg
+from django.utils import timezone
 
 from dataCollector.models import DataCollector, HourlyAverage  # Replace with your model
-from django.utils import timezone
-from datetime import timedelta
 
 
 class Command(BaseCommand):
@@ -49,7 +49,7 @@ class Command(BaseCommand):
             )
 
             try:
-                HourlyAverage.objects.create(
+                HAV = HourlyAverage.objects.create(
                     created_at=now,  # or use auto_now_add to set the current time automatically
                     Lat=average_values['avg_lat'],
                     Lng=average_values['avg_lng'],
@@ -70,5 +70,8 @@ class Command(BaseCommand):
                     PM2_5=average_values['avg_pm2_5'],
                     PM10=average_values['avg_pm10']
                 )
+                if HAV.aqi is None:
+                    HAV.aqi = HAV.calculate_aqi()
+                    HAV.save()
             except Exception as e:
                 print(f'an error has oucored {e}')
