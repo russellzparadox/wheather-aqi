@@ -1,6 +1,7 @@
 from django.contrib import admin
-from dataCollector.models import DataCollector
 from import_export import resources
+
+from dataCollector.models import DataCollector
 
 
 class DataCollectorResource(resources.ModelResource):
